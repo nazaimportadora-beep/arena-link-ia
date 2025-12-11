@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
+import { useState } from "react";
+import Link from "next/link";
 
 export default function ContatoPage() {
   const [formData, setFormData] = useState({
@@ -9,65 +9,125 @@ export default function ContatoPage() {
     email: "",
     phone: "",
     message: "",
-  })
+  });
 
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [error, setError] = useState("")
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitted(true)
-    setError("")
-    
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    alert("Mensagem enviada com sucesso!")
+    e.preventDefault();
+    setIsLoading(true);
+    setIsSubmitted(false);
+    setError("");
 
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-    })
-    setIsSubmitted(false)
-  }
+    // Simulação de envio (retire se for conectar com API)
+    setTimeout(() => {
+      setIsSubmitted(true);
+      setIsLoading(false);
+    }, 1200);
+  };
 
   return (
-    <div style={{ maxWidth: 600, margin: "40px auto", padding: 20 }}>
-      <h1>Contato</h1>
+    <div className="w-full flex flex-col items-center px-4 py-20 bg-white">
+      
+      {/* Título */}
+      <h1 className="text-4xl font-bold text-gray-900 mb-2">Contato</h1>
+      <p className="text-gray-600 mb-10 text-center max-w-2xl">
+        Preencha o formulário abaixo e nossa equipe retornará o mais rápido possível.
+      </p>
 
-      <form onSubmit={handleSubmit}>
-        <label>Nome</label>
-        <input name="name" value={formData.name} onChange={handleChange} required />
+      {/* Formulário */}
+      <form 
+        onSubmit={handleSubmit}
+        className="w-full max-w-3xl bg-white shadow-xl rounded-2xl p-10 border border-gray-200 space-y-6"
+      >
+        {/* Linha Nome + Email */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="font-semibold text-gray-700">Nome</label>
+            <input
+              type="text"
+              name="name"
+              required
+              onChange={handleChange}
+              className="w-full mt-2 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Seu nome completo"
+            />
+          </div>
 
-        <label>Email</label>
-        <input name="email" type="email" value={formData.email} onChange={handleChange} required />
+          <div>
+            <label className="font-semibold text-gray-700">Email</label>
+            <input
+              type="email"
+              name="email"
+              required
+              onChange={handleChange}
+              className="w-full mt-2 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="seu@email.com"
+            />
+          </div>
+        </div>
 
-        <label>Telefone</label>
-        <input name="phone" value={formData.phone} onChange={handleChange} />
+        {/* Telefone */}
+        <div>
+          <label className="font-semibold text-gray-700">Telefone</label>
+          <input
+            type="text"
+            name="phone"
+            onChange={handleChange}
+            className="w-full mt-2 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="(00) 00000-0000"
+          />
+        </div>
 
-        <label>Mensagem</label>
-        <textarea
-          name="message"
-          rows={5}
-          value={formData.message}
-          onChange={handleChange}
-          required
-        />
+        {/* Mensagem */}
+        <div>
+          <label className="font-semibold text-gray-700">Mensagem</label>
+          <textarea
+            name="message"
+            required
+            rows={5}
+            onChange={handleChange}
+            className="w-full mt-2 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+            placeholder="Escreva sua mensagem..."
+          />
+        </div>
 
-        <button type="submit" disabled={isSubmitted}>
-          {isSubmitted ? "Enviando..." : "Enviar Mensagem"}
+        {/* Respostas */}
+        {isSubmitted && (
+          <p className="text-green-600 font-semibold">
+            Mensagem enviada com sucesso!
+          </p>
+        )}
+
+        {error && (
+          <p className="text-red-600 font-semibold">
+            {error}
+          </p>
+        )}
+
+        {/* Botão */}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full py-3 bg-gradient-to-r from-blue-600 to-orange-500 text-white text-lg font-semibold rounded-xl hover:opacity-90 transition disabled:opacity-50"
+        >
+          {isLoading ? "Enviando..." : "Enviar Mensagem"}
         </button>
       </form>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <p style={{ marginTop: 20 }}>
-        <Link href="/">Voltar ao Início</Link>
-      </p>
+      {/* Voltar */}
+      <Link 
+        href="/"
+        className="mt-10 text-blue-600 font-semibold hover:underline"
+      >
+        Voltar ao Início
+      </Link>
     </div>
-  )
+  );
 }
