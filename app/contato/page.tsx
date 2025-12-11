@@ -1,15 +1,7 @@
 "use client"
 
-import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
-
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 
 export default function ContatoPage() {
   const [formData, setFormData] = useState({
@@ -20,95 +12,62 @@ export default function ContatoPage() {
   })
 
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setIsSubmitted(true)
     setError("")
+    
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+    alert("Mensagem enviada com sucesso!")
 
-    setTimeout(() => {
-      setIsSubmitted(true)
-      setIsLoading(false)
-    }, 1500)
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    })
+    setIsSubmitted(false)
   }
 
   return (
-    <>
-      <Header />
+    <div style={{ maxWidth: 600, margin: "40px auto", padding: 20 }}>
+      <h1>Contato</h1>
 
-      <main className="px-6 py-12 max-w-3xl mx-auto">
-        <Card className="p-6 shadow-md rounded-xl border border-gray-200">
-          <h1 className="text-3xl font-bold mb-4">Fale Conosco</h1>
-          <p className="text-gray-600 mb-6">
-            Preencha os campos abaixo e retornaremos o mais rápido possível.
-          </p>
+      <form onSubmit={handleSubmit}>
+        <label>Nome</label>
+        <input name="name" value={formData.name} onChange={handleChange} required />
 
-          {!isSubmitted ? (
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <label>Email</label>
+        <input name="email" type="email" value={formData.email} onChange={handleChange} required />
 
-              <Input
-                type="text"
-                name="name"
-                placeholder="Seu nome"
-                required
-                value={formData.name}
-                onChange={handleChange}
-              />
+        <label>Telefone</label>
+        <input name="phone" value={formData.phone} onChange={handleChange} />
 
-              <Input
-                type="email"
-                name="email"
-                placeholder="Seu e-mail"
-                required
-                value={formData.email}
-                onChange={handleChange}
-              />
+        <label>Mensagem</label>
+        <textarea
+          name="message"
+          rows={5}
+          value={formData.message}
+          onChange={handleChange}
+          required
+        />
 
-              <Input
-                type="text"
-                name="phone"
-                placeholder="Seu telefone"
-                required
-                value={formData.phone}
-                onChange={handleChange}
-              />
+        <button type="submit" disabled={isSubmitted}>
+          {isSubmitted ? "Enviando..." : "Enviar Mensagem"}
+        </button>
+      </form>
 
-              <textarea
-                name="message"
-                placeholder="Escreva sua mensagem"
-                required
-                value={formData.message}
-                onChange={handleChange}
-                className="w-full h-32 p-3 border rounded-lg text-gray-800"
-              />
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-              {error && <p className="text-red-500">{error}</p>}
-
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Enviando..." : "Enviar Mensagem"}
-              </Button>
-            </form>
-          ) : (
-            <div className="text-center py-8">
-              <Badge className="text-lg px-4 py-2">Mensagem enviada com sucesso!</Badge>
-            </div>
-          )}
-        </Card>
-
-        <div className="mt-8 text-center">
-          <Link href="/" className="text-blue-600 underline">
-            Voltar para o início
-          </Link>
-        </div>
-      </main>
-
-      <Footer />
-    </>
+      <p style={{ marginTop: 20 }}>
+        <Link href="/">Voltar ao Início</Link>
+      </p>
+    </div>
   )
 }
